@@ -50,7 +50,7 @@ module FactoryGirl
         else raise "Couldn't find #{clean_with} clean type"
       end
 
-      names = active_record.descendants.select(&:table_exists?).map(&:table_name).uniq if names.empty?
+      names = table_names  if names.empty?
 
       connection.disable_referential_integrity do
         names.each do |table|
@@ -73,6 +73,13 @@ module FactoryGirl
         when "SQLite"     then "DELETE FROM %s"
         when "PostgreSQL" then "TRUNCATE TABLE %s RESTART IDENTITY CASCADE"
         else "TRUNCATE TABLE %s"
+      end
+    end
+
+    def self.table_names
+      case connection.adapter_name
+        when 'Mysql2' then connection.tables - connection.views
+        else connection.tables
       end
     end
   end

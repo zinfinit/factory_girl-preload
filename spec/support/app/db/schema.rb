@@ -31,4 +31,8 @@ ActiveRecord::Schema.define(:version => 0) do
     t.references :category
     t.references :user
   end
+
+  execute <<-SQL
+    CREATE OR REPLACE VIEW test.users_view AS SELECT * FROM users;
+  SQL
 end
